@@ -27,12 +27,21 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	if err != nil {
 		return 0, "", 0, err
 	}
+	if steps <= 0 {
+		return 0, "", 0, fmt.Errorf("Количество шагов должно быть положительным числом")
+	}
+
 	duration, err := time.ParseDuration(slice[2])
 	if err != nil {
-		return 0, "", 0, err
+		return 0, "", 0, fmt.Errorf("Некорректный формат длительности: %v", err)
 	}
+	if duration <= 0 {
+		return 0, "", 0, fmt.Errorf("Длительность должна быть положительным значением")
+	}
+
 	activity := slice[1]
 	return steps, activity, duration, nil
+
 }
 
 func distance(steps int, height float64) float64 {
@@ -72,7 +81,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 			return "", err
 		}
 	default:
-		return "", fmt.Errorf("Неизвестный тип тренировки")
+		return "", fmt.Errorf("неизвестный тип тренировки: %s", activity)
 	}
 
 	distance := distance(steps, height)
